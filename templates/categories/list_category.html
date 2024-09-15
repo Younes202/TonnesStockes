@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Categories</title>
+    {% include 'dashboard/hear_ln.html' %}
+    <script>
+        function openEditModal(category) {
+            document.getElementById('edit-category-id').value = category.id;
+            document.getElementById('edit-name').value = category.name;
+            document.getElementById('edit-description').value = category.description || '';
+            var editModal = new bootstrap.Modal(document.getElementById('editCategoryModal'));
+            editModal.show();
+        }
+    </script>
+</head>
+<body>
+    {% include 'dashboard/sidebar.html' %}
+    <div id="layoutSidenav_content">
+        <main>
+            <div class="container-fluid px-4">
+                <h1 class="mt-4">Users</h1>
+                <ol class="breadcrumb mb-4">
+                    <li class="breadcrumb-item"><a href="{{ url_for('read_root') }}">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Users</li>
+                </ol>
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <!-- Add Category Button -->
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCategoryModal">Add User</button>
+                        {% include 'categories/add_category.html' %}
+                    </div>
+                </div>
+                <div>
+                    <!-- Display submission message if any -->
+                    {% if request.session.get('submission_message') %}
+                    <div class="alert alert-success" role="alert">
+                        {{ request.session['submission_message'] }}
+                    </div>
+                    <!-- Clear the session variable to prevent displaying the message again -->
+                    {% set _ = request.session.pop('submission_message', None) %}
+                    {% endif %}
+                </div>
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <i class="fas fa-table me-1"></i>
+                        DataTable Users
+                    </div>
+                    <div class="card-body">
+                        <form action="/category/edit_or_delete" method="post">
+                            <table id="datatablesSimple" class="table">
+                                <thead>
+                                    <tr>
+                                        <th>User Name</th>
+                                        <th>Description</th>
+                                        <th>Creation Date</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tfoot>
+                                    <tr>
+                                        <th>User Name</th>
+                                        <th>Description</th>
+                                        <th>Creation Date</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </tfoot>
+                                <tbody>
+                                    {% for category in categories %}
+                                        <tr>
+                                            <td>{{ category.name }}</td>
+                                            <td>{{ category.description or 'No description available' }}</td>
+                                            <td>{{ category.creation_date }}</td>
+                                            <td>
+                                                <button type="button" class="btn btn-warning" onclick="openEditModal({ id: '{{ category.id }}', name: '{{ category.name }}', description: '{{ category.description }}' })">
+                                                    Edit
+                                                </button>
+                                                <button type="submit" name="action" value="delete" class="btn btn-danger">Delete</button>
+                                                <input type="hidden" name="category_id" value="{{ category.id }}">
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <footer class="py-4 bg-light mt-auto">
+            <div class="container-fluid px-4">
+                <div class="d-flex align-items-center justify-content-between small">
+                    <div class="text-muted">Copyright &copy; Your Website 2024</div>
+                </div>
+            </div>
+        </footer>
+    </div>
+    <!-- Include the Edit Category Modal -->
+    {% include 'categories/edit_category.html' %}
+</body>
+</html>

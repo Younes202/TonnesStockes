@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Bootstrap CSS -->
+    <link href="{{ url_for('static', path='bootstrap/dist/css/bootstrap.min.css') }}" rel="stylesheet">
+    
+    <title>Authentication</title>
+
+    <style>
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+
+<body class="bg-light">
+
+    <section id="authSection" class="d-flex align-items-center justify-content-center vh-100">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-6 col-lg-5">
+                    <div class="card shadow-lg border-dark">
+                        <div class="card-body p-5">
+                            <h1 id="form-title" class="text-center mb-4">Sign in to your account</h1>
+
+                            <!-- Sign-In Form -->
+                            <form action="/user/signin" method="post" id="signinForm">
+
+                                <div class="mb-3">
+                                    <label for="signin-email" class="form-label">Your Email</label>
+                                    <input type="email" name="username" id="email" class="form-control" placeholder="name@gmail.com" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="signin-password" class="form-label">Password</label>
+                                    <input type="password" name="password" id="password" placeholder="••••••••" class="form-control" required>
+                                </div>
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-primary">Sign in</button>
+                                </div>
+
+                                <p>Access Token: <span id="accessToken"></span></p>
+                                <p>Token Type: <span id="tokenType"></span></p>
+                                <div id="error-message-modal">{{ error_message }}</div>
+                            </form>
+                            <p>Access Token: <span id="accessToken"></span></p>
+                            <p>Token Type: <span id="tokenType"></span></p>
+                            <div id="error-message-modal">{{ error_message }}</div>
+
+                            <!-- Sign-Up Form -->
+                            <form action="/user/signup" method="post" id="signupForm" class="hidden">
+                                <div class="mb-3">
+                                    <label for="signup-email" class="form-label">Your Email</label>
+                                    <input type="email" name="email" id="email" class="form-control" placeholder="name@gmail.com" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="signup-password" class="form-label">Password</label>
+                                    <input type="password" name="password" id="password" placeholder="••••••••" class="form-control" required>
+                                </div>
+                             
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-success">Sign up</button>
+                                </div>
+                            </form>
+
+                            <!-- Toggle between Sign In and Sign Up -->
+                            <div class="mt-4 text-center">
+                                <p id="toggle-text">Don't have an account? <a href="#" id="toggleButton">Sign up</a></p>
+                            </div>
+
+                            <!-- Error Message -->
+                            {% if error_message %}
+                            <div class="alert alert-danger mt-3 text-center" role="alert" id="error-message-modal">
+                                {{ error_message }}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Bootstrap JS -->
+    <script src="{{ url_for('static', path='bootstrap/dist/js/bootstrap.bundle.min.js') }}"></script>
+
+    <!-- JavaScript for Dynamic Form Switching -->
+    <script>
+        const signinForm = document.getElementById('signinForm');
+        const signupForm = document.getElementById('signupForm');
+        const toggleText = document.getElementById('toggle-text');
+        const formTitle = document.getElementById('form-title');
+
+        function toggleForm(event) {
+            event.preventDefault(); // Prevent page reload
+
+            if (signinForm.classList.contains('hidden')) {
+                // Switch to Sign In
+                signinForm.classList.remove('hidden');
+                signupForm.classList.add('hidden');
+                formTitle.textContent = 'Sign in to your account';
+                toggleText.innerHTML = 'Don\'t have an account? <a href="#" id="toggleButton">Sign up</a>';
+            } else {
+                // Switch to Sign Up
+                signupForm.classList.remove('hidden');
+                signinForm.classList.add('hidden');
+                formTitle.textContent = 'Create your account';
+                toggleText.innerHTML = 'Already have an account? <a href="#" id="toggleButton">Sign in</a>';
+            }
+            // Reattach the event listener to the newly created "toggleButton" link
+            document.getElementById('toggleButton').addEventListener('click', toggleForm);
+        }
+
+        // Initial event listener for the first "toggleButton"
+        document.getElementById('toggleButton').addEventListener('click', toggleForm);
+    </script>
+
+</body>
+
+</html>
